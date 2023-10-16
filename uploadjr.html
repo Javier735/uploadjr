@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style type="text/css">
+      .btn-circle {
+        width: 50px;
+        height: 50px;
+        border-radius: 35px;
+        font-size: 24px;
+        line-height: 1.33;
+      }
+
+      .dropzone-wrapper {
+        border: 2px dashed #91b0b3;       
+        margin: auto;
+        color: #92b0b3;
+        position: relative;
+        height: 250px;
+      }
+
+.dropzone-desc {
+  position: absolute;
+  margin: 0 auto;
+  left: 0;
+  right: 0;
+  text-align: center;
+  width: 40%;
+  top: 60px;
+  font-size: 16px;
+}
+
+.dropzone,
+.dropzone:focus {
+  outline: none !important;
+  width: 100%;
+  cursor: pointer;
+}
+
+.dropzone-wrapper:hover,
+.dropzone-wrapper.dragover {
+  background: #ecf0f5;
+}
+
+.input-file {
+  position: absolute;
+  width: 100%;
+  height: 250px;
+  opacity: 0;
+}
+
+.div-img{
+        width: 100px;
+        height: 100px;
+        margin: 15px;        
+        /* border: solid; */
+        border-radius: 10px;
+        display: inline-flex; 
+      }
+
+.delete-icon {
+  position: absolute;
+  transform: translate(60px,5px);
+  width: 28px;
+  height: 25px;
+  border-radius: 35px;
+  font-size: 18px;
+  line-height: .9;
+  z-index: 1;      
+  opacity: .6; 
+  border: none;
+  background-color: gray; 
+  color: #fff;    
+  cursor: pointer;  
+  }
+
+.delete-icon:hover {
+  background-color: red;
+}
+
+.title-img{
+position: absolute;
+  z-index: 1;
+  margin-top: 95px;
+  text-align: center;
+}
+
+.preview-items{
+  text-align: center;
+}
+.img-preview{
+  width: 90px;
+  object-fit: scale-down;
+}
+
+
+</style>
+  </head>
+  <body>
+ <br>
+
+    <div class="container">
+      <!--row of buttons-->
+       <div class="row">
+         <div class="col-md-8"></div>
+         <div class="col-md-4" style="text-align: center;">
+          <button type="button" class="btn btn-outline-danger btn-circle" title="Delete" onclick="deleteItemsPreview();"><i class="bi bi-trash3"></i></button>
+          <button type="button" class="btn btn-outline-primary btn-circle" title="Upload"><i class="bi bi-cloud-upload"></i></button>     
+         </div>
+       </div>
+        <br>
+        <!--row of preview-->
+       <div class="row">
+        <div id="zone-preview" class="preview-items"></div>
+       </div>
+        <br>
+       <!--row of dropzone-->
+        <div class="row">   
+          <div class="container">
+            <div class="dropzone-wrapper">
+              <div class="dropzone-desc">
+                <i class="bi bi-upload"></i>
+                <div>Elija un archivo o arrástrelo aquí.</div>
+              </div>
+              <input type="file" class="dropzone input-file" multiple/>
+            </div>
+          </div>   
+        </div>
+    </div>
+
+     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+<script type="text/javascript">
+
+var arrayFiles=[]; 
+var dropzones = document.querySelectorAll(".dropzone");
+var dropzoneWrappers = document.querySelectorAll(".dropzone-wrapper");
+
+function readFile(input) {
+
+  var combinedHTML = "";
+  var objectURL='';
+  var nameFile="";
+  var arrayNameFile=[];
+  let divPreview = document.getElementById("zone-preview");  
+
+    if (input.files && input.files[0]) {
+      let arr = input.files;
+      for (let i = 0; i < arr.length; i++) {
+      arrayFiles.push(arr[i]);
+      }       
+    }
+
+    for (let i = 0; i < arrayFiles.length; i++) {   
+
+       objectURL = URL.createObjectURL( arrayFiles[i]);  
+       nameFile=arrayFiles[i].name;
+
+       //If the file is of type pdf, then the preview will be an image of a pdf
+      if(arrayFiles[i].type == 'application/pdf'){       
+        objectURL='imgpdf.png';
+      }    
+ 
+      nameFile=arrayFiles[i].name;
+      arrayNameFile=nameFile.split(".");
+
+      if(arrayNameFile[0].length>10){
+        nameFile=arrayNameFile[0].substring(0,10)+"."+arrayNameFile[1];
+      }
+    
+      combinedHTML += "<div class='div-img'>"
+        +"<img class='img-preview' src="+objectURL+" />"
+        +"<button class='delete-icon'onclick=deleteItemPreview("+i+"); >x</button>"     
+        +"<p class='title-img'>"+nameFile+"</p>" 
+        +"</div>"
+        ;         
+    }  
+   console.log("Datos del array");
+   console.log(arrayFiles);
+  divPreview.innerHTML = combinedHTML; 
+}
+
+// Agrega un evento "change" a cada elemento
+dropzones.forEach(function(dropzone) {
+  dropzone.addEventListener("change", function() {
+    readFile(this);
+  });
+});
+
+// Agrega un evento "dragover" a cada elemento
+dropzoneWrappers.forEach(function(dropzoneWrapper) {
+  dropzoneWrapper.addEventListener("dragover", function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    dropzoneWrapper.classList.add("dragover");
+  });
+});
+
+// Agrega un evento "dragleave" a cada elemento
+dropzoneWrappers.forEach(function(dropzoneWrapper) {
+  dropzoneWrapper.addEventListener("dragleave", function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    dropzoneWrapper.classList.remove("dragover");
+  });
+});
+
+
+function deleteItemPreview(value){
+  var input=" <input type=file'/>";
+  arrayFiles.splice(value,1);
+  readFile(input);
+}
+
+function deleteItemsPreview(){
+  var input=" <input type=file'/>";
+  arrayFiles=[];
+  readFile(input);
+}
+
+</script>
+
+  </body>
+</html>
+
