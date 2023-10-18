@@ -142,6 +142,7 @@ var dropzoneWrappers = document.querySelectorAll(".dropzone-wrapper");
 
 function readFile(input) {
 
+  console.log("entra a funcion readFile");
   var combinedHTML = "";
   var objectURL='';
   var nameFile="";
@@ -178,16 +179,16 @@ function readFile(input) {
         +"<p class='title-img'>"+nameFile+"</p>" 
         +"</div>"
         ;         
-    }  
-   console.log("Datos del array");
-   console.log(arrayFiles);
+    }   
   divPreview.innerHTML = combinedHTML; 
 }
 
 // Agrega un evento "change" a cada elemento
 dropzones.forEach(function(dropzone) {
   dropzone.addEventListener("change", function() {
+    console.log("hay un cambio");
     readFile(this);
+    dropzone.value='';
   });
 });
 
